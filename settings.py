@@ -32,10 +32,20 @@ font = pygame.font.Font(None, 36)
 button_width = 200
 button_height = 50
 
+
+
+# ฟังก์ชันสำหรับสร้างปุ่ม
+def draw_button(screen, x, y, width, height, text, color):
+    pygame.draw.rect(screen, color, (x, y, width, height))
+    text_surface = font.render(text, True, (0, 0, 0))
+    text_rect = text_surface.get_rect(center=(x + width / 2, y + height / 2))
+    screen.blit(text_surface, text_rect)
+
+
 #เคลี่ยนที่
 scroll_left = False
 scroll_right = False
 scroll = 0
 scroll_speed = 1
 
-
+ 
