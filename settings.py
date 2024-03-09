@@ -25,7 +25,7 @@ magen = (255, 0, 255)
 black = (0, 0, 0)
 
 # กำหนด font
-font = pygame.font.Font(None, 36)
+font = pygame.font.Font(None, 24)
 
 
 #กำหนดขนาดปุ่ม
@@ -41,6 +41,13 @@ def draw_button(screen, x, y, width, height, text, color):
     text_rect = text_surface.get_rect(center=(x + width / 2, y + height / 2))
     screen.blit(text_surface, text_rect)
 
+# Function to draw text
+def draw_text(text, x, y, font_size=30, color=black):
+    font = pygame.font.Font(None, font_size)  # Default font and size
+    text_surface = font.render(text, True, color)
+    text_rect = text_surface.get_rect()
+    text_rect.center = (x, y)
+    screen.blit(text_surface, text_rect)
 
 #เคลี่ยนที่
 scroll_left = False
@@ -48,4 +55,3 @@ scroll_right = False
 scroll = 0
 scroll_speed = 1
 
- 

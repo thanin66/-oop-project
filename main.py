@@ -164,7 +164,7 @@ class Player(pygame.sprite.Sprite) :
     ACTIONS = [ 'Idle', 'Attack', 'Move', 'Jump',]
     GRAVITY = 0.5
 
-    def __init__(self,action = 'Idle', x = 0, y = 720 , hp = 100 ,max_hp = 100, dmg = 25, speed = 5, attack_de_cooldown = 30,frame = 0):
+    def __init__(self,action = 'Idle', x = 0, y = 720 , hp = 300 ,max_hp = 300, speed = 5,frame = 0):
         super().__init__()
         self.action = action # ท่าทาง
         self.image =pygame.image.load(f'images/character/{self.action}.png')
@@ -177,24 +177,15 @@ class Player(pygame.sprite.Sprite) :
         self.y = y #ต่ำแหน่ง
         self.hp = hp # เลือด
         self.max_hp = max_hp # maxเลือด
-        self.dmg = dmg 
         self.speed = speed
-        self.velocity_y = 0
-        self.attack_de_cooldown = attack_de_cooldown
         self.attack_cooldown = 0
         self.frame = frame
         self.deltatime = 0
         self.direction = 1
         self.rate = 0
 
-    def apply_gravity(self):
-        # ในแต่ละเฟรม ความเร็วในแนวตั้งจะเพิ่มขึ้นตามค่าแรงโน้มถ่วง
-        self.velocity_y += Player.GRAVITY
-        self.y += self.velocity_y
 
-    def jump(self, jump_strength):
-        # เมื่อกระโดด ความเร็วในแนวตั้งจะถูกเซ็ตให้เป็นค่าของ jump_strength
-        self.velocity_y = -jump_strength
+
     def jump(self):
         # กระโดดเฉพาะเมื่ออยู่บนพื้น
         if self.rect.bottom >= SCREEN_HEIGHT - 100:
@@ -211,6 +202,7 @@ class Player(pygame.sprite.Sprite) :
             self.rect.top = 0
         elif self.rect.bottom > SCREEN_HEIGHT-100:
             self.rect.bottom = SCREEN_HEIGHT - 100
+
 
 class Enemy(pygame.sprite.Sprite):
     global scroll_left, scroll_right
@@ -229,8 +221,9 @@ class Enemy(pygame.sprite.Sprite):
         self.speed = speed
         self.attack_cooldown = attack_cooldown
 
+
     def update(self):
-        print(self.name)
+
         if self.rect.x < self.player.rect.x:
             self.rect.x += self.speed
         elif self.rect.x > self.player.rect.x:
@@ -246,10 +239,42 @@ class Enemy(pygame.sprite.Sprite):
             self.speed = 4
             self.dmg = 1
 
+        if self.name == 'Giant':
+
+            self.speed = 1
+            self.dmg = 40
+        self.time = 1000
         if pygame.sprite.collide_rect(self.player, self) and self.attack_cooldown == 0:
             self.player.hp -= self.dmg
+            print(self.dmg)
             self.attack_cooldown = 60
+            self.time = 0
+        if pygame.sprite.collide_rect(self.player, self):
+            draw_text(f"-{self.dmg}", 665, 475,color=red)
 
+
+class Weapon:
+    def __init__(self, name, damage, attack_speed):
+        self.name = name                # ชื่อของอาวุธ
+        self.damage = damage            # ความเสียหายที่สร้างให้กับศัตรู
+        self.attack_speed = attack_speed  # ความเร็วในการโจมตี (ยิง/โจมตีต่อหนึ่งหน่วยเวลา)
+        self.images = []                # รายการภาพของ animation
+        self.current_frame = 0          # เฟรมปัจจุบันใน animation
+        # โหลดและปรับขนาดรูปภาพของ animation
+        for r in range(1, 5):  # มีภาพ 4 เฟรม จะเปลี่ยนตามความเหมาะสม
+            image = pygame.image.load(f'images/character/Attack0{r}.png')
+            image = pygame.transform.scale(image, (100, 100))  # ปรับขนาดเป็น 50x50 pixels
+            self.images.append(image)
+
+    def attack(self, player_x, player_y):
+        # แสดงรูปภาพอาวุธที่ตำแหน่งของผู้เล่น
+        screen.blit(self.images[self.current_frame], (player_x, player_y))
+        # เลื่อนไปยังเฟรมถัดไปใน animation
+        self.current_frame = (self.current_frame + 1) % len(self.images)
+
+    def reload(self):
+        # นับเวลาแสดงอาวุธใหม่ตามความเร็วในการโจมตี
+        pass
 #game currency
 #shop
 #trader
@@ -264,14 +289,14 @@ class Enemy(pygame.sprite.Sprite):
 #base image 
 #auto defene image level dmg
 
-
-
+slime = Weapon('slime',10,2)
 
 class Main:
     def __init__(self):
         pygame.init()
         self.display_surface = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
         self.clock = pygame.time.Clock()
+        pygame.display.set_caption("Your Game Title")
 
     def run(self):
         global scroll, scroll_left, scroll_right
@@ -281,8 +306,10 @@ class Main:
         all_sprites.add(player)
         enemy_spawn_timer = 0
         score_kill = 0
-
-
+        # ghost = Enemy(player, 40, 40, 2)
+        # Giant = Enemy(player, 40, 40, 2)
+        # wolf = Enemy(player, 40, 40, 2)
+        self.Name = ['Wolf', 'Mage','Giant']
         while True:
             dt = self.clock.tick() / 1000
             draw_bg()
@@ -295,25 +322,12 @@ class Main:
             if enemy_spawn_timer > 0:
                 enemy_spawn_timer -= 1
 
-            if player.attack_cooldown < player.attack_de_cooldown:
-                player.attack_cooldown += 1
-
             if enemy_spawn_timer == 0:
-                name = random.choice(['Wolf', 'Mage'])
+                name = random.choice(self.Name)
                 new_enemy = Enemy(player, name, 10, 40, 40, 2)
                 all_sprites.add(new_enemy)
                 enemy_spawn_timer = 100 
 
-            hits = pygame.sprite.spritecollide(player, all_sprites, False)
-            for hit in hits:
-                if isinstance(hit, Enemy):
-                    hit.hp -= 1
-                    player.attack_cooldown = 0
-                    player.action = 'Attack'
-                    if hit.hp < 1:
-                        hit.kill()
-                        score_kill += 1
-                        print(score_kill)
 
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
@@ -325,11 +339,9 @@ class Main:
                     elif event.key == pygame.K_d:
                         scroll_right = True
                     elif event.key == pygame.K_r:
-                        player.hp = 100
+                        player.hp = player.max_hp
                     elif event.key == pygame.K_SPACE:
                         player.jump()
-                    elif event.key == pygame.K_f and player.attack_cooldown == 30:
-                        player.attack()
                 elif event.type == pygame.KEYUP:
                     if event.key == pygame.K_a and scroll_left == True:
                         scroll_left = False
@@ -340,7 +352,7 @@ class Main:
                     if pause_button_rect.collidepoint(mouse_pos):
                         if Menu.game_setting_menu(screen):  # Check the return value
                             return  # Exit the main_game loop and return to the main_menu
-    
+                        
 
             screen.blit(sky_img, (0 - scroll, 0))
 
@@ -351,16 +363,20 @@ class Main:
             draw_button(screen, pause_button_rect.x, pause_button_rect.y, 50, button_height, "ll", gray)
             
             all_sprites.update()
-            
+
             # วาด
             all_sprites.draw(screen)
 
-            red_hp_bar = pygame.Rect(player.rect.x +20 , player.rect.y - 35, 50,button_height)
-            draw_button(screen, 50, 700, 1000, 20, "", red)
-            hp_bar = pygame.Rect(player.rect.x  +20 , player.rect.y - 35, player.hp, 50)
-            draw_button(screen, 50, 700, (1000 * (player.hp/player.max_hp)) , 20, "", green)
+            slime.attack(player.rect.x - 125 ,player.rect.y)
+            slime.attack(player.rect.x +150 ,player.rect.y)
 
+            red_hp_bar = pygame.Rect(player.rect.x , player.rect.y, 50,button_height)
+            draw_button(screen, red_hp_bar.x+15, red_hp_bar.y-15 , 100, 20, "", red)
+            hp_bar = pygame.Rect(player.rect.x, player.rect.y, player.hp, 50)
+            draw_button(screen, hp_bar.x+15, hp_bar.y-15 , ((player.hp/player.max_hp) * 100) , 20, f"HP{player.hp}", green)
+            print(player.hp)
             pygame.display.flip()
+
 
             # จำกัดเฟรมเรต
             self.clock.tick(60)
