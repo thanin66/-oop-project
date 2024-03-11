@@ -3,10 +3,14 @@ from settings import *
 
 
 sky_img = pygame.image.load('images/background/bg_1.png').convert_alpha()
-width = sky_img.get_width()
-for x in range(4):
-    screen.blit(sky_img, ((x * width) - scroll, 0))
 
+def draw_bg():
+    screen.fill(green)
+    width = sky_img.get_width()
+    for x in range(5):
+        screen.blit(sky_img, ((x * width) - scroll, 0))
+    for y in range(1, 6):
+        screen.blit(sky_img, ((-y * width) - scroll, 0))
 
 class Menu():
 
@@ -250,10 +254,9 @@ class Enemy(pygame.sprite.Sprite):
 
 
 class Weapon:
-    def __init__(self, name, damage, attack_speed):
+    def __init__(self, name, damage, attack_cooldawn):
         self.name = name                # ชื่อของอาวุธ
         self.damage = damage            # ความเสียหายที่สร้างให้กับศัตรู
-        self.attack_speed = attack_speed  # ความเร็วในการโจมตี (ยิง/โจมตีต่อหนึ่งหน่วยเวลา)
         self.images = []                # รายการภาพของ animation
         self.current_frame = 0          # เฟรมปัจจุบันใน animation
         # โหลดและปรับขนาดรูปภาพของ animation
@@ -261,17 +264,21 @@ class Weapon:
             image = pygame.image.load(f'images/character/Attack0{r}.png')
             image = pygame.transform.scale(image, (100, 100))  # ปรับขนาดเป็น 50x50 pixels
             self.images.append(image)
+        self.attack_cooldawn = attack_cooldawn
+    def attack(self, x,y, enemies):
+        for enemy in enemies:
+            if enemy.rect.collidepoint(x, y) :
+                print('F')
+                enemy.hp -= self.damage
 
-    def attack(self, player_x, player_y):
-        
+            if enemy.hp < 1 :
+                enemies.remove(enemy)
+
         # แสดงรูปภาพอาวุธที่ตำแหน่งของผู้เล่น
-        screen.blit(self.images[self.current_frame], (player_x, player_y))
+        screen.blit(self.images[self.current_frame], (x,y))
         # เลื่อนไปยังเฟรมถัดไปใน animation
         self.current_frame = (self.current_frame + 1) % len(self.images)
 
-    def reload(self):
-        # นับเวลาแสดงอาวุธใหม่ตามความเร็วในการโจมตี
-        pass
 #game currency
 #shop
 #trader
@@ -286,7 +293,7 @@ class Weapon:
 #base image 
 #auto defene image level dmg
 
-slime = Weapon('slime',10,2)
+
 
 class Main:
     def __init__(self):
@@ -296,11 +303,19 @@ class Main:
         pygame.display.set_caption("Your Game Title")
 
     def run(self):
-        global scroll, scroll_left, scroll_right
+        global scroll, scroll_left, scroll_right, enemy, weapon_right,weapon_left
 
         player = Player()
-        all_sprites = pygame.sprite.Group()
-        all_sprites.add(player)
+        player_sprites = pygame.sprite.Group()
+
+
+        enemy_sprites = pygame.sprite.Group()
+
+        w_pos = player.rect.x
+        melee = Weapon('slime',2.5,2)
+        magic = Weapon('slime',2.5,2)
+
+        player_sprites.add(player)
         enemy_spawn_timer = 0
         score_kill = 0
         # ghost = Enemy(player, 40, 40, 2)
@@ -309,6 +324,8 @@ class Main:
         self.Name = ['Wolf', 'Mage','Giant']
         while True:
             dt = self.clock.tick() / 1000
+            draw_bg()
+
             if scroll_left == True:
                 scroll -= 5
             if scroll_right == True:
@@ -320,8 +337,8 @@ class Main:
             if enemy_spawn_timer == 0:
                 name = random.choice(self.Name)
                 new_enemy = Enemy(player, name, 10, 40, 40, 2)
-                all_sprites.add(new_enemy)
-                enemy_spawn_timer = 100 
+                enemy_sprites.add(new_enemy)
+                enemy_spawn_timer = 200 
 
 
             for event in pygame.event.get():
@@ -330,9 +347,15 @@ class Main:
                     sys.exit()
                 if event.type == pygame.KEYDOWN:
                     if event.key == pygame.K_a:
+                        w_pos = player.rect.x
                         scroll_left = True
+                        weapon_left = True
+                        weapon_right = False
                     elif event.key == pygame.K_d:
+                        w_pos = player.rect.x
                         scroll_right = True
+                        weapon_right = True
+                        weapon_left = False
                     elif event.key == pygame.K_r:
                         player.hp = player.max_hp
                     elif event.key == pygame.K_SPACE:
@@ -349,7 +372,9 @@ class Main:
                             return  # Exit the main_game loop and return to the main_menu
                         
 
-            screen.blit(sky_img, (0 - scroll, 0))
+
+                            
+                screen.blit(sky_img, (0 - scroll, 0))
 
 
                 # โค้ดอื่นๆ ที่ต้องการให้ทำงานร่วมกับเกม
@@ -357,18 +382,32 @@ class Main:
             pause_button_rect = pygame.Rect(1100, 30, 50, button_height)
             draw_button(screen, pause_button_rect.x, pause_button_rect.y, 50, button_height, "ll", gray)
             
-            all_sprites.update()
+            enemy_sprites.update()
 
             # วาด
-            all_sprites.draw(screen)
+            enemy_sprites.draw(screen)
+            player_sprites.update()
 
-            slime.attack(player.rect.x - 125 ,player.rect.y)
-            slime.attack(player.rect.x +150 ,player.rect.y)
+            # วาด
+            player_sprites.draw(screen)
 
-            ered_hp_bar = pygame.Rect(player.rect.x , player.rect.y, 50,button_height)
-            draw_button(screen, ered_hp_bar.x+15, ered_hp_bar.y-15 , 100, 20, "", red)
-            ehp_bar = pygame.Rect(player.rect.x, player.rect.y, player.hp, 50)
-            draw_button(screen, ehp_bar.x+15, ehp_bar.y-15 , ((hit.hp/player.max_hp) * 100) , 20, f"HP{player.hp}", green)
+            if weapon_left == True:
+                w_pos -= 10
+            if weapon_right == True:
+                w_pos += 10
+            if abs(w_pos - player.rect.x) > 500:
+                w_pos = player.rect.x
+
+            
+            melee.attack(w_pos, player.rect.y, enemy_sprites)
+
+            for enemy in enemy_sprites:
+                ered_hp_bar = pygame.Rect(enemy.rect.x , enemy.rect.y, 50,button_height)
+                draw_button(screen, ered_hp_bar.x+80, ered_hp_bar.y-15 , 100, 20, "", red)
+                ehp_bar = pygame.Rect(enemy.rect.x, enemy.rect.y, enemy.hp, 50)
+                draw_button(screen, ehp_bar.x+80, ehp_bar.y-15 , ((enemy.hp/enemy.max_hp) * 100) , 20, "", green)
+                        
+
 
             red_hp_bar = pygame.Rect(player.rect.x , player.rect.y, 50,button_height)
             draw_button(screen, red_hp_bar.x+15, red_hp_bar.y-15 , 100, 20, "", red)
