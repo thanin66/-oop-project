@@ -2,20 +2,28 @@ import pygame,sys
 from settings import *
 
 
-sky_img = pygame.image.load('images/background/bg_1.png').convert_alpha()
+floor_img = pygame.image.load('images/Background/floor_1.png').convert_alpha()
+mountain_img = pygame.image.load('images/Background/mountain_1.png').convert_alpha()
+sky_img = pygame.image.load('images/Background/sky_1.png').convert_alpha()
 
+pine1_img = ()
+pine2_img = ()
+print(sky_img.get_width(),mountain_img.get_width())
 def draw_bg():
     screen.fill(green)
     width = sky_img.get_width()
-    for x in range(5):
-        screen.blit(sky_img, ((x * width) - scroll, 0))
-    for y in range(1, 6):
-        screen.blit(sky_img, ((-y * width) - scroll, 0))
+    for x in range(4):
+        screen.blit(sky_img, ((x * width) - scroll * 0.5, 0))
+        screen.blit(mountain_img, ((x * width) - scroll * 0.6, 0))
+        screen.blit(floor_img, ((x * width) - scroll, 0))
+    for y in range(1, 11):
+        screen.blit(sky_img, ((-y * width) - scroll * 0.5, 0))
+        screen.blit(mountain_img, ((-y * width) - scroll * 0.6, 0))
+        screen.blit(floor_img, ((-y * width) - scroll, 0))
 
 class Menu():
-
     def mode_game(screen):
-        global back_button_rect, easy_button_rect, hard_button_rect
+        global back_button_rect, easy_button_rect, hard_button_rect,mode
         while True:
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
@@ -24,15 +32,15 @@ class Menu():
                 elif event.type == pygame.MOUSEBUTTONDOWN:
                     mouse_pos = pygame.mouse.get_pos()
                     if back_button_rect.collidepoint(mouse_pos):
-                        print("back")
                         Menu.main_menu(screen)
                     elif easy_button_rect.collidepoint(mouse_pos):
-                        print("easy Button Clicked")
+                        mode = [10, 100, 100]
                         main = Main()
                         main.run()
                     elif hard_button_rect.collidepoint(mouse_pos):
-                        print("hard Button Clicked")
-
+                        mode = [20, 200, 200]
+                        main = Main()
+                        main.run()
             screen.blit(bg, (0, 0))
 
             back_button_rect = pygame.Rect(10, 40, button_width, button_height)
@@ -46,7 +54,6 @@ class Menu():
 
             pygame.display.flip()
 
-    # ฟังก์ชันสำหรับแสดงเมนูหลัก
     def main_menu(screen):
         global start_button_rect, setting_button_rect, quit_button_rect
         while True:
@@ -57,12 +64,8 @@ class Menu():
                 elif event.type == pygame.MOUSEBUTTONDOWN:
                     mouse_pos = pygame.mouse.get_pos()
                     if start_button_rect.collidepoint(mouse_pos):
-                        # ทำสิ่งที่ต้องการเมื่อคลิกที่ปุ่ม start
-                        print("Start Button Clicked")
                         Menu.mode_game(screen)
                     elif setting_button_rect.collidepoint(mouse_pos):
-                        # ทำสิ่งที่ต้องการเมื่อคลิกที่ปุม setting
-                        print("Setting Button Clicked")
                         Menu.setting_menu(screen)
                     elif quit_button_rect.collidepoint(mouse_pos):
                         pygame.quit()
@@ -70,21 +73,51 @@ class Menu():
 
             screen.blit(bg, (0, 0))
 
-            # สร้างปุ่ม start
             start_button_rect = pygame.Rect(540, 200, button_width, button_height)
             draw_button(screen, start_button_rect.x, start_button_rect.y, button_width, button_height, "Start", gray)
 
-            # สร้างปุ่ม setting
             setting_button_rect = pygame.Rect(540, 300, button_width, button_height)
             draw_button(screen, setting_button_rect.x, setting_button_rect.y, button_width, button_height, "Setting", gray)
 
-            # สร้างปุ่ม quit
             quit_button_rect = pygame.Rect(540, 400, button_width, button_height)
             draw_button(screen, quit_button_rect.x, quit_button_rect.y, button_width, button_height, "Quit", gray)
 
             pygame.display.flip()
+    def over_menu(screen):
+        global start_button_rect, setting_button_rect, quit_button_rect
+        while True:
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    pygame.quit()
+                    sys.exit()
+                elif event.type == pygame.MOUSEBUTTONDOWN:
+                    mouse_pos = pygame.mouse.get_pos()
+                    if start_button_rect.collidepoint(mouse_pos):
+                        Menu.mode_game(screen)
+                    elif setting_button_rect.collidepoint(mouse_pos):
+                        Menu.setting_menu(screen)
+                    elif back_button_rect.collidepoint(mouse_pos):
+                        Menu.main_menu(screen)
+                    elif quit_button_rect.collidepoint(mouse_pos):
+                        pygame.quit()
+                        sys.exit()
 
-    # ฟังก์ชันสำหรับแสดงเมนูตั้งค่า
+            screen.blit(bg, (0, 0))
+
+            back_button_rect = pygame.Rect(10, 40, button_width, button_height)
+            draw_button(screen, back_button_rect.x, back_button_rect.y, button_width, button_height, "Back", gray)
+
+
+            start_button_rect = pygame.Rect(540, 200, button_width, button_height)
+            draw_button(screen, start_button_rect.x, start_button_rect.y, button_width, button_height, "play again", gray)
+
+            setting_button_rect = pygame.Rect(540, 300, button_width, button_height)
+            draw_button(screen, setting_button_rect.x, setting_button_rect.y, button_width, button_height, "Setting", gray)
+
+            quit_button_rect = pygame.Rect(540, 400, button_width, button_height)
+            draw_button(screen, quit_button_rect.x, quit_button_rect.y, button_width, button_height, "Quit", gray)
+
+            pygame.display.flip()
     def setting_menu(screen):
         while True:
             for event in pygame.event.get():
@@ -94,20 +127,16 @@ class Menu():
                 elif event.type == pygame.MOUSEBUTTONDOWN:
                     mouse_pos = pygame.mouse.get_pos()
                     if back_button_rect.collidepoint(mouse_pos):
-                        print("back")
                         Menu.main_menu(screen)
                     elif fullscreen_button_rect.collidepoint(mouse_pos):
-                        print('fullscreen')
                         screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT), pygame.FULLSCREEN)
 
                     elif window_button_rect.collidepoint(mouse_pos):
-                        print('fullscreen')
                         screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
                         return
 
             screen.blit(bg, (0, 0))
 
-            # สร้างปุ่ม Back
             back_button_rect = pygame.Rect(540, 500, button_width, button_height)
             draw_button(screen, back_button_rect.x, back_button_rect.y, button_width, button_height, "Back", gray)
 
@@ -130,22 +159,17 @@ class Menu():
                 elif event.type == pygame.MOUSEBUTTONDOWN:
                     mouse_pos = pygame.mouse.get_pos()
                     if back_button_rect.collidepoint(mouse_pos):
-                        print("back to game")
                         return  # Return to the main_game function
                     elif main_button_rect.collidepoint(mouse_pos):
-                        print("to Main menu")
                         Menu.main_menu(screen)
                     elif fullscreen_button_rect.collidepoint(mouse_pos):
-                        print('fullscreen')
                         screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT), pygame.FULLSCREEN)
                     elif window_button_rect.collidepoint(mouse_pos):
-                        print('window')
                         screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
 
                         
             screen.blit(bg, (0, 0))
 
-            # สร้างปุ่ม Back
             back_button_rect = pygame.Rect(700, 500, button_width, button_height)
             draw_button(screen, back_button_rect.x, back_button_rect.y, button_width, button_height, "back to game", gray)
 
@@ -161,10 +185,9 @@ class Menu():
             pygame.display.flip()
 
 class Player(pygame.sprite.Sprite) :
-    ACTIONS = [ 'Idle', 'Attack', 'Move', 'Jump',]
     GRAVITY = 0.5
 
-    def __init__(self,action = 'Idle', x = 0, y = 720 , hp = 300 ,max_hp = 300, speed = 5,frame = 0):
+    def __init__(self,action = 'player', x = 0, y = 720 , hp = 100 ,max_hp = 100, speed = 5,frame = 0):
         super().__init__()
         self.action = action # ท่าทาง
         self.image =pygame.image.load(f'images/character/{self.action}.png')
@@ -184,8 +207,6 @@ class Player(pygame.sprite.Sprite) :
         self.direction = 1
         self.rate = 0
 
-
-
     def jump(self):
         # กระโดดเฉพาะเมื่ออยู่บนพื้น
         if self.rect.bottom >= SCREEN_HEIGHT - 100:
@@ -202,7 +223,6 @@ class Player(pygame.sprite.Sprite) :
             self.rect.top = 0
         elif self.rect.bottom > SCREEN_HEIGHT-100:
             self.rect.bottom = SCREEN_HEIGHT - 100
-
 
 class Enemy(pygame.sprite.Sprite):
     global scroll_left, scroll_right
@@ -221,7 +241,6 @@ class Enemy(pygame.sprite.Sprite):
         self.speed = speed
         self.attack_cooldown = attack_cooldown
 
-
     def update(self):
 
         if self.rect.x < self.player.rect.x:
@@ -235,8 +254,8 @@ class Enemy(pygame.sprite.Sprite):
         if self.attack_cooldown > 0:
             self.attack_cooldown -= 1
 
-        if self.name == 'Wolf':
-            self.speed = 4
+        if self.name == 'Mage':
+            self.speed = 5
             self.dmg = 1
 
         if self.name == 'Giant':
@@ -254,31 +273,22 @@ class Enemy(pygame.sprite.Sprite):
 
 
 class Weapon:
-    def __init__(self, name, damage, attack_cooldawn):
-        self.name = name                # ชื่อของอาวุธ
-        self.damage = damage            # ความเสียหายที่สร้างให้กับศัตรู
-        self.images = []                # รายการภาพของ animation
-        self.current_frame = 0          # เฟรมปัจจุบันใน animation
-        # โหลดและปรับขนาดรูปภาพของ animation
-        for r in range(1, 5):  # มีภาพ 4 เฟรม จะเปลี่ยนตามความเหมาะสม
-            image = pygame.image.load(f'images/character/Attack0{r}.png')
-            image = pygame.transform.scale(image, (100, 100))  # ปรับขนาดเป็น 50x50 pixels
-            self.images.append(image)
-        self.attack_cooldawn = attack_cooldawn
+    def __init__(self, name, damage):
+        self.name = name     
+        self.damage = damage  
+        self.image = pygame.image.load(f'images/character/Attack01.png')
+        self.image = pygame.transform.scale(self.image, (100, 100))
     def attack(self, x,y, enemies):
+        global score_kill
         for enemy in enemies:
             if enemy.rect.collidepoint(x, y) :
-                print('F')
                 enemy.hp -= self.damage
 
             if enemy.hp < 1 :
                 enemies.remove(enemy)
+                score_kill +=1
 
-        # แสดงรูปภาพอาวุธที่ตำแหน่งของผู้เล่น
-        screen.blit(self.images[self.current_frame], (x,y))
-        # เลื่อนไปยังเฟรมถัดไปใน animation
-        self.current_frame = (self.current_frame + 1) % len(self.images)
-
+        screen.blit(self.image, (x,y))
 #game currency
 #shop
 #trader
@@ -294,7 +304,6 @@ class Weapon:
 #auto defene image level dmg
 
 
-
 class Main:
     def __init__(self):
         pygame.init()
@@ -303,7 +312,7 @@ class Main:
         pygame.display.set_caption("Your Game Title")
 
     def run(self):
-        global scroll, scroll_left, scroll_right, enemy, weapon_right,weapon_left
+        global scroll, scroll_left, scroll_right, enemy, weapon_right,weapon_left,score_kill
 
         player = Player()
         player_sprites = pygame.sprite.Group()
@@ -312,18 +321,15 @@ class Main:
         enemy_sprites = pygame.sprite.Group()
 
         w_pos = player.rect.x
-        melee = Weapon('slime',2.5,2)
-        magic = Weapon('slime',2.5,2)
+        magic = Weapon('slime',2.5)
 
         player_sprites.add(player)
         enemy_spawn_timer = 0
-        score_kill = 0
         # ghost = Enemy(player, 40, 40, 2)
         # Giant = Enemy(player, 40, 40, 2)
         # wolf = Enemy(player, 40, 40, 2)
         self.Name = ['Wolf', 'Mage','Giant']
         while True:
-            dt = self.clock.tick() / 1000
             draw_bg()
 
             if scroll_left == True:
@@ -334,13 +340,16 @@ class Main:
             if enemy_spawn_timer > 0:
                 enemy_spawn_timer -= 1
 
+            if enemy_spawn_timer == 0 and player.hp < player.max_hp - 5:
+                draw_text(f"+5", 630, 475,color=green)
+                player.hp += 5
+
             if enemy_spawn_timer == 0:
                 name = random.choice(self.Name)
-                new_enemy = Enemy(player, name, 10, 40, 40, 2)
+                if score_kill >= 0:
+                    new_enemy = Enemy(player, name,mode[0] + (mode[0] * 10/100)*(score_kill * 10/100) ,mode[1] + (mode[1] * 50/100)*(score_kill * 10/100), mode[2] + (mode[2] * 50/100)*(score_kill * 10/100) , 3)
                 enemy_sprites.add(new_enemy)
                 enemy_spawn_timer = 200 
-
-
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     pygame.quit()
@@ -370,15 +379,9 @@ class Main:
                     if pause_button_rect.collidepoint(mouse_pos):
                         if Menu.game_setting_menu(screen):  # Check the return value
                             return  # Exit the main_game loop and return to the main_menu
-                        
+            if player.hp <=200:
+                Menu.over_menu(screen)    
 
-
-                            
-                screen.blit(sky_img, (0 - scroll, 0))
-
-
-                # โค้ดอื่นๆ ที่ต้องการให้ทำงานร่วมกับเกม
-            screen.blit(sky_img, (0 - scroll, 0))
             pause_button_rect = pygame.Rect(1100, 30, 50, button_height)
             draw_button(screen, pause_button_rect.x, pause_button_rect.y, 50, button_height, "ll", gray)
             
@@ -399,7 +402,7 @@ class Main:
                 w_pos = player.rect.x
 
             
-            melee.attack(w_pos, player.rect.y, enemy_sprites)
+            magic.attack(w_pos, player.rect.y, enemy_sprites)
 
             for enemy in enemy_sprites:
                 ered_hp_bar = pygame.Rect(enemy.rect.x , enemy.rect.y, 50,button_height)
@@ -407,6 +410,8 @@ class Main:
                 ehp_bar = pygame.Rect(enemy.rect.x, enemy.rect.y, enemy.hp, 50)
                 draw_button(screen, ehp_bar.x+80, ehp_bar.y-15 , ((enemy.hp/enemy.max_hp) * 100) , 20, "", green)
                         
+            draw_text(f'scorekill = {score_kill}', 1000, 50)
+            draw_text(f'HP ENEMY {mode[1] + (mode[1] * 50/100)*(score_kill * 10/100)} ', 400, 50)
 
 
             red_hp_bar = pygame.Rect(player.rect.x , player.rect.y, 50,button_height)
@@ -415,9 +420,8 @@ class Main:
             draw_button(screen, hp_bar.x+15, hp_bar.y-15 , ((player.hp/player.max_hp) * 100) , 20, f"HP{player.hp}", green)
 
             pygame.display.flip()
+            pygame.display.update()
 
-
-            # จำกัดเฟรมเรต
             self.clock.tick(60)
 
 if __name__ == '__main__':
