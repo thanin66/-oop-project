@@ -60,3 +60,4 @@ scroll_speed = 1
 
 weapon_left = False
 weapon_right = False
+
