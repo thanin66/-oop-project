@@ -28,6 +28,9 @@ black = (0, 0, 0)
 font = pygame.font.Font(None, 24)
 
 
+score_kill = 0
+mode = 1
+
 #กำหนดขนาดปุ่ม
 button_width = 200
 button_height = 50

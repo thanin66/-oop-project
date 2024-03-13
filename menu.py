@@ -1,5 +1,5 @@
 from settings import *
-from main import *
+from gameapp import *
 
 
 
