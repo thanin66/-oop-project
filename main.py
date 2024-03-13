@@ -10,9 +10,9 @@ pine1_img = ()
 pine2_img = ()
 print(sky_img.get_width(),mountain_img.get_width())
 def draw_bg():
-    screen.fill(green)
+    screen.fill(black)
     width = sky_img.get_width()
-    for x in range(4):
+    for x in range(11):
         screen.blit(sky_img, ((x * width) - scroll * 0.5, 0))
         screen.blit(mountain_img, ((x * width) - scroll * 0.6, 0))
         screen.blit(floor_img, ((x * width) - scroll, 0))
@@ -349,7 +349,13 @@ class Main:
                 if score_kill >= 0:
                     new_enemy = Enemy(player, name,mode[0] + (mode[0] * 10/100)*(score_kill * 10/100) ,mode[1] + (mode[1] * 50/100)*(score_kill * 10/100), mode[2] + (mode[2] * 50/100)*(score_kill * 10/100) , 3)
                 enemy_sprites.add(new_enemy)
-                enemy_spawn_timer = 200 
+                if score_kill >= 0:
+                    enemy_spawn_timer = 200
+                if score_kill >= 20:
+                    enemy_spawn_timer = 150
+                if score_kill >= 30:
+                    enemy_spawn_timer = 100
+
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     pygame.quit()
@@ -365,8 +371,6 @@ class Main:
                         scroll_right = True
                         weapon_right = True
                         weapon_left = False
-                    elif event.key == pygame.K_r:
-                        player.hp = player.max_hp
                     elif event.key == pygame.K_SPACE:
                         player.jump()
                 elif event.type == pygame.KEYUP:
@@ -411,13 +415,13 @@ class Main:
                 draw_button(screen, ehp_bar.x+80, ehp_bar.y-15 , ((enemy.hp/enemy.max_hp) * 100) , 20, "", green)
                         
             draw_text(f'scorekill = {score_kill}', 1000, 50)
-            draw_text(f'HP ENEMY {mode[1] + (mode[1] * 50/100)*(score_kill * 10/100)} ', 400, 50)
+            draw_text(f'HP ENEMY {int(mode[1] + (mode[1] * 50/100)*(score_kill * 10/100))} ', 400, 50)
 
 
             red_hp_bar = pygame.Rect(player.rect.x , player.rect.y, 50,button_height)
             draw_button(screen, red_hp_bar.x+15, red_hp_bar.y-15 , 100, 20, "", red)
             hp_bar = pygame.Rect(player.rect.x, player.rect.y, player.hp, 50)
-            draw_button(screen, hp_bar.x+15, hp_bar.y-15 , ((player.hp/player.max_hp) * 100) , 20, f"HP{player.hp}", green)
+            draw_button(screen, hp_bar.x+15, hp_bar.y-15 , ((player.hp/player.max_hp) * 100) , 20, f"HP{int(player.hp)}", green)
 
             pygame.display.flip()
             pygame.display.update()
