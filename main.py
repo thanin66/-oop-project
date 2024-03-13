@@ -93,7 +93,7 @@ class Menu():
                 elif event.type == pygame.MOUSEBUTTONDOWN:
                     mouse_pos = pygame.mouse.get_pos()
                     if again_button.collidepoint(mouse_pos):
-                        Menu.mode_game(screen)
+                        Menu.main_menu(screen)
                     elif setting_button_rect.collidepoint(mouse_pos):
                         Menu.setting_menu(screen)
                     elif back_button_rect.collidepoint(mouse_pos):
@@ -103,6 +103,7 @@ class Menu():
                         sys.exit()
 
             screen.blit(bg, (0, 0))
+            draw_text(f'total score  {score_kill} kill ', 620, 100)
 
             back_button_rect = pygame.Rect(10, 40, button_width, button_height)
             draw_button(screen, back_button_rect.x, back_button_rect.y, button_width, button_height, "Back", gray)
