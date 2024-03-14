@@ -21,6 +21,8 @@ def draw_bg():
         screen.blit(mountain_img, ((-y * width) - scroll * 0.6, 0))
         screen.blit(floor_img, ((-y * width) - scroll, 0))
 
+
+
 class Menu():
     def mode_game(screen):
         global back_button_rect, easy_button_rect, hard_button_rect,mode
@@ -272,7 +274,6 @@ class Enemy(pygame.sprite.Sprite):
         if pygame.sprite.collide_rect(self.player, self):
             draw_text(f"-{self.dmg}", 665, 475,color=red)
 
-
 class Weapon:
     def __init__(self, name, damage):
         self.name = name     
@@ -290,20 +291,6 @@ class Weapon:
                 score_kill +=1
 
         screen.blit(self.image, (x,y))
-#game currency
-#shop
-#trader
-#coins
-#items
-#randon level item
-
-#game model
-            
-#wall hp spike image
-#fire hp skill exp image
-#base image 
-#auto defene image level dmg
-
 
 class Main:
     def __init__(self):
@@ -428,6 +415,7 @@ class Main:
             pygame.display.update()
 
             self.clock.tick(60)
+
 
 if __name__ == '__main__':
     Menu.main_menu(screen)
