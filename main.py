@@ -192,7 +192,7 @@ class Player(pygame.sprite.Sprite) :
 
     def __init__(self,action = 'player', x = 0, y = 720 , hp = 100 ,max_hp = 100, speed = 5,frame = 0):
         super().__init__()
-        self.action = action # ท่าทาง
+        self.action = action 
         self.image =pygame.image.load(f'images/character/{self.action}.png')
         self.image = pygame.transform.scale(self.image, (self.image.get_width()//4 , self.image.get_height() //4))
         self.rect = self.image.get_rect()
@@ -297,7 +297,7 @@ class Main:
         pygame.init()
         self.display_surface = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
         self.clock = pygame.time.Clock()
-        pygame.display.set_caption("Your Game Title")
+        pygame.display.set_caption("ka puk")
 
     def run(self):
         global scroll, scroll_left, scroll_right, enemy, weapon_right,weapon_left,score_kill
@@ -419,4 +419,5 @@ class Main:
 
 if __name__ == '__main__':
     Menu.main_menu(screen)
+
 
