@@ -295,7 +295,6 @@ class Weapon:
 class Main:
     def __init__(self):
         pygame.init()
-        self.display_surface = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
         self.clock = pygame.time.Clock()
         pygame.display.set_caption("ka puk")
 
