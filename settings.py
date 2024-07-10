@@ -35,7 +35,7 @@ mode = 1
 button_width = 200
 button_height = 50
 
-
+screenChange = False
 
 # ฟังก์ชันสำหรับสร้างปุ่ม
 def draw_button(screen, x, y, width, height, text, color):
@@ -61,3 +61,11 @@ scroll_speed = 1
 weapon_left = False
 weapon_right = False
 
+floor_img = pygame.image.load('images/Background/floor_1.png').convert_alpha()
+mountain_img = pygame.image.load('images/Background/mountain_1.png').convert_alpha()
+if 0 <= score_kill < 1:
+    sky_img = pygame.image.load('images/Background/sky_1.png').convert_alpha()
+if 1 <= score_kill < 2:
+    sky_img = pygame.image.load('images/Background/sky_2.png').convert_alpha()
+if 2 <= score_kill:
+    sky_img = pygame.image.load('images/Background/sky_3.png').convert_alpha()

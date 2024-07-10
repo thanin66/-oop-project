@@ -43,6 +43,8 @@ class Menu():
                         main = Main()
                         main.run()
             screen.blit(bg1, (0, 0))
+            draw_text(f'Every second, you are close to death.', 620, 120,font_size=100,color=red)
+            draw_text(f'Are you ready for that?', 620, 500,font_size=100,color=red)
 
             back_button_rect = pygame.Rect(10, 40, button_width, button_height)
             draw_button(screen, back_button_rect.x, back_button_rect.y, button_width, button_height, "Back", gray)
@@ -280,7 +282,7 @@ class Weapon:
         self.image = pygame.image.load(f'images/character/Attack01.png')
         self.image = pygame.transform.scale(self.image, (100, 100))
     def attack(self, x,y, enemies):
-        global score_kill
+        global score_kill,sky_img
         for enemy in enemies:
             if enemy.rect.collidepoint(x, y) :
                 enemy.hp -= self.damage
@@ -288,6 +290,10 @@ class Weapon:
             if enemy.hp < 1 :
                 enemies.remove(enemy)
                 score_kill +=1
+                if score_kill==10:
+                    sky_img = pygame.image.load('images/Background/sky_2.png').convert_alpha()
+                if score_kill==20:
+                    sky_img = pygame.image.load('images/Background/sky_3.png').convert_alpha()
 
         screen.blit(self.image, (x,y))
 
@@ -399,10 +405,15 @@ class Main:
                 draw_button(screen, ered_hp_bar.x+80, ered_hp_bar.y-15 , 100, 20, "", red)
                 ehp_bar = pygame.Rect(enemy.rect.x, enemy.rect.y, enemy.hp, 50)
                 draw_button(screen, ehp_bar.x+80, ehp_bar.y-15 , ((enemy.hp/enemy.max_hp) * 100) , 20, "", green)
-                        
-            draw_text(f'scorekill = {score_kill}', 800, 50,font_size=75)
-            draw_text(f'HP ENEMY {int(mode[1] + (mode[1] * 50/100)*(score_kill * 10/100))} ', 300, 50,font_size=75)
+                
 
+
+                        
+            draw_text(f'scorekill = {score_kill}', 800, 50,font_size=75,color=white)
+            draw_text(f'HP ENEMY {int(mode[1] + (mode[1] * 50/100)*(score_kill * 10/100))} ', 300, 50,font_size=75,color=white)
+
+            if score_kill == 0:
+                draw_text(f'GOOD LUCK...', 620, 360,font_size=100,color=red)
 
             red_hp_bar = pygame.Rect(player.rect.x , player.rect.y, 50,button_height)
             draw_button(screen, red_hp_bar.x+15, red_hp_bar.y-15 , 100, 20, "", red)
