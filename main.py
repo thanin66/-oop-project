@@ -24,7 +24,8 @@ def draw_bg():
 
 class Menu():
     def mode_game(screen):
-        global back_button_rect, easy_button_rect, hard_button_rect,mode
+        global back_button_rect, easy_button_rect, hard_button_rect,mode,sky_img
+        sky_img = pygame.image.load('images/Background/sky_1.png').convert_alpha()
         while True:
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
@@ -290,7 +291,7 @@ class Weapon:
             if enemy.hp < 1 :
                 enemies.remove(enemy)
                 score_kill +=1
-                if score_kill==10:
+                if score_kill==13:
                     sky_img = pygame.image.load('images/Background/sky_2.png').convert_alpha()
                 if score_kill==20:
                     sky_img = pygame.image.load('images/Background/sky_3.png').convert_alpha()
@@ -302,7 +303,6 @@ class Main:
         pygame.init()
         self.clock = pygame.time.Clock()
         pygame.display.set_caption("ka puk")
-
     def run(self):
         global scroll, scroll_left, scroll_right, enemy, weapon_right,weapon_left,score_kill
 
