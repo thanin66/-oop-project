@@ -15,7 +15,7 @@ screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
 
 # กำหนดภาพพื้นหลัง
 bg = pygame.image.load('images/background/bg_1.png').convert_alpha()
-
+bg1 = pygame.image.load('images/background/bg_2.png').convert_alpha()
 #สี
 white = (255, 255, 255)
 gray = (150, 150, 150) 

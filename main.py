@@ -8,7 +8,6 @@ sky_img = pygame.image.load('images/Background/sky_1.png').convert_alpha()
 
 pine1_img = ()
 pine2_img = ()
-print(sky_img.get_width(),mountain_img.get_width())
 def draw_bg():
     screen.fill(black)
     width = sky_img.get_width()
@@ -43,7 +42,7 @@ class Menu():
                         mode = [20, 200, 200]
                         main = Main()
                         main.run()
-            screen.blit(bg, (0, 0))
+            screen.blit(bg1, (0, 0))
 
             back_button_rect = pygame.Rect(10, 40, button_width, button_height)
             draw_button(screen, back_button_rect.x, back_button_rect.y, button_width, button_height, "Back", gray)
@@ -73,7 +72,7 @@ class Menu():
                         pygame.quit()
                         sys.exit()
 
-            screen.blit(bg, (0, 0))
+            screen.blit(bg1, (0, 0))
 
             start_button_rect = pygame.Rect(540, 200, button_width, button_height)
             draw_button(screen, start_button_rect.x, start_button_rect.y, button_width, button_height, "Start", gray)
@@ -105,7 +104,7 @@ class Menu():
                         sys.exit()
 
             screen.blit(bg, (0, 0))
-            draw_text(f'total score  {score_kill} kill ', 620, 100)
+            draw_text(f'total score  {score_kill} kill ', 620, 100,font_size=100,color=red)
 
             back_button_rect = pygame.Rect(10, 40, button_width, button_height)
             draw_button(screen, back_button_rect.x, back_button_rect.y, button_width, button_height, "Back", gray)
@@ -138,7 +137,7 @@ class Menu():
                         screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
                         return
 
-            screen.blit(bg, (0, 0))
+            screen.blit(bg1, (0, 0))
 
             back_button_rect = pygame.Rect(540, 500, button_width, button_height)
             draw_button(screen, back_button_rect.x, back_button_rect.y, button_width, button_height, "Back", gray)
@@ -171,7 +170,7 @@ class Menu():
                         screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
 
                         
-            screen.blit(bg, (0, 0))
+            screen.blit(bg1, (0, 0))
 
             back_button_rect = pygame.Rect(700, 500, button_width, button_height)
             draw_button(screen, back_button_rect.x, back_button_rect.y, button_width, button_height, "back to game", gray)
@@ -237,7 +236,7 @@ class Enemy(pygame.sprite.Sprite):
         self.max_hp = max_hp
         self.name = name
         self.image = pygame.image.load(f'images/character/{self.name}01.png')  
-        self.image = pygame.transform.scale(self.image, (self.image.get_width()//2, self.image.get_height()//2))
+        self.image = pygame.transform.scale(self.image, (self.image.get_width()//2 + (score_kill*1.5), self.image.get_height()//2+ (score_kill*1.5)))
         self.rect = self.image.get_rect()
         self.rect.x = random.choice([-300, SCREEN_WIDTH+300])
         self.rect.y = SCREEN_HEIGHT // 2
@@ -277,7 +276,7 @@ class Enemy(pygame.sprite.Sprite):
 class Weapon:
     def __init__(self, name, damage):
         self.name = name     
-        self.damage = damage  
+        self.damage = damage + score_kill * 1/100
         self.image = pygame.image.load(f'images/character/Attack01.png')
         self.image = pygame.transform.scale(self.image, (100, 100))
     def attack(self, x,y, enemies):
@@ -337,11 +336,11 @@ class Main:
                     new_enemy = Enemy(player, name,mode[0] + (mode[0] * 10/100)*(score_kill * 10/100) ,mode[1] + (mode[1] * 50/100)*(score_kill * 10/100), mode[2] + (mode[2] * 50/100)*(score_kill * 10/100) , 3)
                 enemy_sprites.add(new_enemy)
                 if score_kill >= 0:
-                    enemy_spawn_timer = 200
+                    enemy_spawn_timer = 300
                 if score_kill >= 20:
-                    enemy_spawn_timer = 150
+                    enemy_spawn_timer = 320
                 if score_kill >= 30:
-                    enemy_spawn_timer = 100
+                    enemy_spawn_timer = 225
 
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
@@ -401,8 +400,8 @@ class Main:
                 ehp_bar = pygame.Rect(enemy.rect.x, enemy.rect.y, enemy.hp, 50)
                 draw_button(screen, ehp_bar.x+80, ehp_bar.y-15 , ((enemy.hp/enemy.max_hp) * 100) , 20, "", green)
                         
-            draw_text(f'scorekill = {score_kill}', 1000, 50)
-            draw_text(f'HP ENEMY {int(mode[1] + (mode[1] * 50/100)*(score_kill * 10/100))} ', 400, 50)
+            draw_text(f'scorekill = {score_kill}', 800, 50,font_size=75)
+            draw_text(f'HP ENEMY {int(mode[1] + (mode[1] * 50/100)*(score_kill * 10/100))} ', 300, 50,font_size=75)
 
 
             red_hp_bar = pygame.Rect(player.rect.x , player.rect.y, 50,button_height)
